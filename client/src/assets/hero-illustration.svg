@@ -1,0 +1,76 @@
+<svg width="480" height="480" viewBox="0 0 480 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="60" y1="40" x2="420" y2="440" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7C5CFF"/>
+      <stop offset="1" stop-color="#A34AC4"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="60" y2="80" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFC94A"/>
+      <stop offset="1" stop-color="#FF8DBC"/>
+    </linearGradient>
+    <style>
+      .outline { stroke: rgba(26, 12, 56, 0.45); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+  <rect x="30" y="30" width="420" height="420" rx="60" fill="url(#bg)"/>
+  <circle cx="150" cy="120" r="40" fill="rgba(255, 201, 74, 0.28)"/>
+  <circle cx="360" cy="160" r="48" fill="rgba(124, 231, 255, 0.18)"/>
+  <path d="M80 320C140 280 200 260 240 260C280 260 340 280 400 320V420H80V320Z" fill="rgba(10, 4, 32, 0.45)"/>
+
+  <g>
+    <path d="M190 250C168 250 148 268 146 290L140 350H210L204 290C202 268 182 250 160 250H190Z" fill="#FF8DBC"/>
+    <circle cx="170" cy="210" r="48" fill="#FFE3EA"/>
+    <path d="M150 208C156 212 162 214 170 214C178 214 184 212 190 208" stroke="rgba(26,12,56,0.45)" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="158" cy="200" r="6" fill="#2D1460"/>
+    <circle cx="182" cy="200" r="6" fill="#2D1460"/>
+    <path class="outline" d="M134 350H206L198 416"/>
+  </g>
+
+  <g>
+    <path d="M300 270C276 270 256 288 254 312L248 380H330L324 312C322 288 302 270 278 270H300Z" fill="#7CE7FF"/>
+    <circle cx="280" cy="228" r="52" fill="#D8F5FF"/>
+    <path d="M258 226C264 230 272 232 280 232C288 232 296 230 302 226" stroke="rgba(26,12,56,0.45)" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="264" cy="216" r="6.5" fill="#2D1460"/>
+    <circle cx="292" cy="216" r="6.5" fill="#2D1460"/>
+    <path class="outline" d="M248 380H336L324 420"/>
+  </g>
+
+  <g>
+    <path d="M120 324L200 264L220 288L140 348L120 324Z" fill="#FFE17A"/>
+    <path class="outline" d="M200 264L220 284C228 292 228 306 220 314L142 374"/>
+  </g>
+
+  <g>
+    <path d="M260 330L340 284L356 310L276 356L260 330Z" fill="#FF7F5F"/>
+    <path class="outline" d="M340 284L354 306C360 316 356 330 346 336L280 372"/>
+  </g>
+
+  <g>
+    <rect x="188" y="120" width="104" height="34" rx="16" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.4)" stroke-width="6"/>
+    <circle cx="212" cy="137" r="6" fill="#FFC94A"/>
+    <circle cx="236" cy="137" r="6" fill="#FF8DBC"/>
+    <circle cx="260" cy="137" r="6" fill="#7CE7FF"/>
+  </g>
+
+  <g>
+    <circle cx="118" cy="162" r="12" fill="url(#accent)"/>
+    <circle cx="360" cy="118" r="10" fill="url(#accent)"/>
+    <path d="M348 86L366 78" stroke="rgba(255,255,255,0.35)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M132 108L150 100" stroke="rgba(255,255,255,0.35)" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <g>
+    <path d="M180 392H220" stroke="rgba(255,255,255,0.4)" stroke-width="14" stroke-linecap="round"/>
+    <path d="M260 392H300" stroke="rgba(255,255,255,0.4)" stroke-width="14" stroke-linecap="round"/>
+  </g>
+
+  <g>
+    <path d="M132 380C132 366 144 354 158 354H186C200 354 212 366 212 380V404H132V380Z" fill="rgba(255,255,255,0.22)"/>
+    <path d="M272 380C272 366 284 354 298 354H326C340 354 352 366 352 380V404H272V380Z" fill="rgba(255,255,255,0.2)"/>
+  </g>
+
+  <text x="240" y="440" text-anchor="middle" font-family="Poppins, 'Segoe UI', sans-serif" font-size="28" font-weight="600" fill="white">
+    Together we create
+  </text>
+</svg>
+
