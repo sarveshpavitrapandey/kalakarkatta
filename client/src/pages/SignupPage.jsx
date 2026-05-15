@@ -20,11 +20,10 @@ export default function SignupPage() {
   const handleSignup = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setMessage('');
     try {
       const res = await axios.post('http://localhost:5000/api/auth/register', formData);
-      localStorage.setItem('user', JSON.stringify(res.data));
-      dispatch({ type: 'LOGIN', payload: res.data });
-      navigate('/profile');
+      navigate('/verification-sent', { state: { email: formData.email } });
     } catch (err) {
       setMessage(err.response?.data?.error || 'Registration failed');
     } finally {
@@ -58,11 +57,11 @@ export default function SignupPage() {
             <input 
               type="text" 
               name="name" 
-              placeholder="John Doe" 
+              placeholder="Enter your full name" 
               value={formData.name} 
               onChange={handleChange} 
               required 
-              className="w-full bg-background/50 border border-border rounded-xl px-4 py-3.5 text-text focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition shadow-inner"
+              className="w-full bg-background/50 border border-border rounded-xl px-4 py-3.5 text-text placeholder:text-textMuted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition shadow-inner"
             />
           </div>
           
@@ -71,11 +70,11 @@ export default function SignupPage() {
             <input 
               type="email" 
               name="email" 
-              placeholder="name@example.com" 
+              placeholder="Enter your email" 
               value={formData.email} 
               onChange={handleChange} 
               required 
-              className="w-full bg-background/50 border border-border rounded-xl px-4 py-3.5 text-text focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition shadow-inner"
+              className="w-full bg-background/50 border border-border rounded-xl px-4 py-3.5 text-text placeholder:text-textMuted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition shadow-inner"
             />
           </div>
 
@@ -84,12 +83,35 @@ export default function SignupPage() {
             <input 
               type="password" 
               name="password" 
-              placeholder="••••••••" 
+              placeholder="Create a password" 
               value={formData.password} 
               onChange={handleChange} 
               required 
-              className="w-full bg-background/50 border border-border rounded-xl px-4 py-3.5 text-text focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition shadow-inner"
+              className="w-full bg-background/50 border border-border rounded-xl px-4 py-3.5 text-text placeholder:text-textMuted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition shadow-inner"
             />
+            {formData.password && (
+              <div className="mt-2 px-1">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-[10px] uppercase tracking-wider font-bold text-textMuted">Strength</span>
+                  <span className={`text-[10px] font-bold uppercase ${
+                    formData.password.length < 6 ? 'text-red-400' : 
+                    formData.password.length < 9 ? 'text-yellow-400' : 'text-green-400'
+                  }`}>
+                    {formData.password.length < 6 ? 'Weak' : formData.password.length < 10 ? 'Fair' : 'Strong'}
+                  </span>
+                </div>
+                <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ 
+                      width: `${Math.min((formData.password.length / 12) * 100, 100)}%`,
+                      backgroundColor: formData.password.length < 6 ? '#f87171' : formData.password.length < 10 ? '#fbbf24' : '#34d399'
+                    }}
+                    className="h-full transition-all duration-300"
+                  />
+                </div>
+              </div>
+            )}
           </div>
           
           <button 
@@ -105,7 +127,11 @@ export default function SignupPage() {
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg p-3 text-sm text-center mt-5 mb-0"
+            className={`rounded-lg p-3 text-sm text-center mt-5 mb-0 border ${
+              message.includes('successful') 
+                ? 'text-green-400 bg-green-400/10 border-green-400/20' 
+                : 'text-red-400 bg-red-400/10 border-red-400/20'
+            }`}
           >
             {message}
           </motion.p>

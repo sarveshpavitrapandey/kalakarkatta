@@ -72,9 +72,14 @@ export default function Header() {
         setUnreadMsgCount(prev => prev + 1);
       });
 
+      socket.on('messages_read', () => {
+        fetchCounts();
+      });
+      
       return () => {
         socket.off('new_notification');
         socket.off('receive_message');
+        socket.off('messages_read');
       };
     }
   }, [socket]);

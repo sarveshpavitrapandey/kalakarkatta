@@ -187,12 +187,18 @@ export default function Profile() {
             {/* Avatar with Glow */}
             <div className="relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-primary to-blue-400 rounded-full blur opacity-40 group-hover:opacity-60 transition duration-500" />
-              <div className="relative w-40 h-40 md:w-48 md:h-48 rounded-full border-4 border-surface overflow-hidden shadow-2xl">
-                <img 
-                  src={profileData.profilePicture || "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=600&q=80"} 
-                  alt={profileData.name}
-                  className="w-full h-full object-cover"
-                />
+              <div className={`relative w-40 h-40 md:w-48 md:h-48 rounded-full border-4 border-surface overflow-hidden shadow-2xl flex items-center justify-center ${!profileData.profilePicture ? 'bg-gradient-to-br from-primary to-blue-400' : ''}`}>
+                {profileData.profilePicture ? (
+                  <img 
+                    src={profileData.profilePicture} 
+                    alt={profileData.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-6xl md:text-7xl font-black text-white drop-shadow-lg">
+                    {(profileData.name || profileData.username || 'U')[0].toUpperCase()}
+                  </span>
+                )}
               </div>
               {profileData.availabilityStatus && profileData.availabilityStatus !== 'Unavailable' && (
                 <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-green-500 text-white text-[10px] font-bold px-3 py-1 rounded-full border-2 border-surface shadow-lg whitespace-nowrap">
@@ -273,7 +279,7 @@ export default function Profile() {
             onClick={() => setActiveTab('posts')}
             className={`pb-4 text-sm font-black tracking-widest uppercase transition-all ${activeTab === 'posts' ? 'text-primary border-b-2 border-primary' : 'text-textMuted hover:text-white'}`}
           >
-            Portfolio
+            Posts
           </button>
           <button 
             onClick={() => setActiveTab('about')}
@@ -369,8 +375,12 @@ export default function Profile() {
                 {/* Header */}
                   <div className="p-6 border-b border-white/5 flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full overflow-hidden border border-primary/30">
-                        <img src={profileData.profilePicture} className="w-full h-full object-cover" />
+                      <div className={`w-10 h-10 rounded-full overflow-hidden border border-primary/30 flex items-center justify-center ${!profileData.profilePicture ? 'bg-gradient-to-br from-primary to-blue-400' : ''}`}>
+                        {profileData.profilePicture ? (
+                          <img src={profileData.profilePicture} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-sm font-bold text-white">{(profileData.name || profileData.username || 'U')[0].toUpperCase()}</span>
+                        )}
                       </div>
                       <div>
                         <div className="font-bold text-white text-sm">{profileData.username}</div>
@@ -442,7 +452,7 @@ export default function Profile() {
                     <input 
                       type="text" 
                       placeholder="Add a comment..."
-                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 pr-12 text-sm text-white focus:outline-none focus:border-primary transition"
+                      className="w-full bg-surface border border-border rounded-xl py-3 px-4 pr-12 text-sm text-text focus:outline-none focus:border-primary transition"
                       value={commentText}
                       onChange={(e) => setCommentText(e.target.value)}
                     />
@@ -534,7 +544,7 @@ export default function Profile() {
                       type="text" 
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-primary transition"
+                      className="w-full bg-surface border border-border rounded-xl py-3 px-4 text-sm text-text focus:outline-none focus:border-primary transition"
                     />
                   </div>
                   <div>
@@ -543,7 +553,7 @@ export default function Profile() {
                       value={editBio}
                       onChange={(e) => setEditBio(e.target.value)}
                       rows={3}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-primary transition resize-none"
+                      className="w-full bg-surface border border-border rounded-xl py-3 px-4 text-sm text-text focus:outline-none focus:border-primary transition resize-none"
                     />
                   </div>
                   <div>
@@ -551,7 +561,7 @@ export default function Profile() {
                     <select 
                       value={editStatus}
                       onChange={(e) => setEditStatus(e.target.value)}
-                      className="w-full bg-white/10 border border-white/10 rounded-xl py-3 px-4 text-sm text-white focus:outline-none focus:border-primary transition"
+                      className="w-full bg-surface border border-border rounded-xl py-3 px-4 text-sm text-text focus:outline-none focus:border-primary transition"
                     >
                       <option value="Unavailable" className="bg-[#0f0c29] text-white">Unavailable</option>
                       <option value="Open to Work" className="bg-[#0f0c29] text-white">Open to Work</option>

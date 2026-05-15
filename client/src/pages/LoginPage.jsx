@@ -52,11 +52,11 @@ export default function LoginPage() {
             <label className="block text-sm font-semibold text-textMuted mb-1.5 ml-1">Email</label>
             <input 
               type="email" 
-              placeholder="name@example.com" 
+              placeholder="Enter your email" 
               value={email} 
               onChange={e => setEmail(e.target.value)} 
               required 
-              className="w-full bg-background/50 border border-border rounded-xl px-4 py-3.5 text-text focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition shadow-inner"
+              className="w-full bg-background/50 border border-border rounded-xl px-4 py-3.5 text-text placeholder:text-textMuted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition shadow-inner"
             />
           </div>
           <div>
@@ -66,11 +66,11 @@ export default function LoginPage() {
             </div>
             <input 
               type="password" 
-              placeholder="••••••••" 
+              placeholder="Enter your password" 
               value={password} 
               onChange={e => setPassword(e.target.value)} 
               required 
-              className="w-full bg-background/50 border border-border rounded-xl px-4 py-3.5 text-text focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition shadow-inner"
+              className="w-full bg-background/50 border border-border rounded-xl px-4 py-3.5 text-text placeholder:text-textMuted focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition shadow-inner"
             />
           </div>
           

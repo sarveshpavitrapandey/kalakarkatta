@@ -125,6 +125,7 @@ export default function ChatPage() {
       setSelectedFile(null);
     } catch (err) {
       console.error("Error sending message:", err);
+      alert(err.response?.data?.error || "Failed to send message. Please check your connection.");
     } finally {
       setIsUploading(false);
     }
@@ -199,8 +200,16 @@ export default function ChatPage() {
                   <div className="rounded-xl overflow-hidden mt-1 mb-1">
                     {msg.mediaType === 'video' ? (
                       <video src={msg.mediaUrl} controls className="max-w-full max-h-[300px] object-cover" />
-                    ) : (
+                    ) : msg.mediaType === 'image' ? (
                       <img src={msg.mediaUrl} alt="attachment" className="max-w-full max-h-[300px] object-cover" />
+                    ) : (
+                      <a href={msg.mediaUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-3 bg-white/10 rounded-xl text-white no-underline hover:bg-white/20 transition">
+                        <span className="text-2xl">📄</span>
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold uppercase tracking-widest">Document</span>
+                          <span className="text-[10px] opacity-70">Click to view/download</span>
+                        </div>
+                      </a>
                     )}
                   </div>
                 )}
@@ -253,6 +262,12 @@ export default function ChatPage() {
               placeholder="Message..."
               className="flex-1 bg-transparent border-none text-text py-3 px-2 focus:outline-none"
               disabled={isUploading}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage(e);
+                }
+              }}
             />
           </div>
           <button 

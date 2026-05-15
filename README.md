@@ -144,23 +144,6 @@ kalakarkatta/
 └── README.md
 ```
 
----
-
-## 📡 API Overview
-
-| Method | Endpoint | Access | Description |
-|---|---|---|---|
-| POST | `/api/auth/register` | Public | Register a new user |
-| POST | `/api/auth/login` | Public | Login and receive JWT |
-| GET | `/api/posts` | Protected | Get all community posts |
-| POST | `/api/posts` | Protected | Create a new post |
-| GET | `/api/events` | Public | Get all events |
-| GET | `/api/jobs` | Public | Get all job listings |
-| GET | `/api/messages/:id` | Protected | Get conversation messages |
-| GET | `/api/notifications` | Protected | Get user notifications |
-| POST | `/api/chatbot/chat` | Protected | Send message to AI chatbot |
-
----
 
 ## 📄 License
 

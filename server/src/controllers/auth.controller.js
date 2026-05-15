@@ -42,9 +42,8 @@ const registerUser = async (req, res) => {
       });
       res.status(201).json({ message: 'Registration successful! Please check your email to verify your account.' });
     } catch (err) {
-      user.verificationToken = undefined;
-      await user.save({ validateBeforeSave: false });
-      return res.status(500).json({ error: 'Email could not be sent' });
+      await User.findByIdAndDelete(user._id);
+      return res.status(500).json({ error: 'Email could not be sent. Please try again later.' });
     }
 
   } catch (error) {

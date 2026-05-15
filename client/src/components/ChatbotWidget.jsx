@@ -5,9 +5,7 @@ import { AuthContext } from '../context/AuthContext';
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hello! I am your KalakarKatta Assistant. How can I help you today?' }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { user: loggedUser } = useContext(AuthContext);
@@ -20,6 +18,17 @@ export default function ChatbotWidget() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Proactive greeting when opened
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      setIsLoading(true);
+      setTimeout(() => {
+        setMessages([{ role: 'assistant', content: 'Hi! How can I help you today?' }]);
+        setIsLoading(false);
+      }, 600);
+    }
+  }, [isOpen]);
 
   // Clear chat when user logs out
   useEffect(() => {
@@ -61,6 +70,7 @@ export default function ChatbotWidget() {
         : "Sorry, I'm having trouble connecting right now. Please try again later.";
       
       setMessages(prev => [...prev, { role: 'assistant', content: errorMsg }]);
+      alert(errorMsg);
     } finally {
       setIsLoading(false);
     }
@@ -132,7 +142,7 @@ export default function ChatbotWidget() {
                 <input
                   type="text"
                   placeholder="Ask me anything..."
-                  className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 pr-12 text-sm text-white focus:outline-none focus:border-primary transition"
+                  className="w-full bg-surface border border-border rounded-xl py-3 px-4 pr-12 text-sm text-text focus:outline-none focus:border-primary transition"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                 />

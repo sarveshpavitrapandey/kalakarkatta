@@ -25,40 +25,61 @@ router.post('/', requireAuth, async (req, res) => {
       ? 'https://api.vck.ai/v1/chat/completions' 
       : 'https://api.openai.com/v1/chat/completions';
 
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: message }
-        ]
-      })
-    });
+    // Add a timeout to the request
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`AI Gateway Error (${response.status}):`, errorText);
-      return res.status(response.status).json({ error: "AI service returned an error" });
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: message }
+          ]
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`AI Gateway Error (${response.status}):`, errorText);
+        return res.status(response.status).json({ error: `AI service error: ${response.status}` });
+      }
+
+      const data = await response.json();
+      
+      if (!data.choices || !data.choices[0]) {
+         console.error("AI Gateway Unexpected Response:", data);
+         return res.status(500).json({ error: "AI service returned an empty response" });
+      }
+
+      const aiMessage = data.choices[0].message.content;
+      res.json({ response: aiMessage });
+
+    } catch (err) {
+      clearTimeout(timeoutId);
+      if (err.name === 'AbortError') {
+        console.error("Chatbot Error: Connection timed out");
+        return res.status(504).json({ error: "Connection to AI service timed out" });
+      }
+      throw err; // Re-throw to be caught by the outer catch
     }
-
-    const data = await response.json();
-    
-    if (!data.choices || !data.choices[0]) {
-       console.error("AI Gateway Unexpected Response:", data);
-       return res.status(500).json({ error: "AI service returned an empty response" });
-    }
-
-    const aiMessage = data.choices[0].message.content;
-    res.json({ response: aiMessage });
 
   } catch (error) {
-    console.error("Chatbot Exception:", error);
-    res.status(500).json({ error: "Failed to connect to AI assistant" });
+    console.error("Chatbot Exception Details:", {
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
+    res.status(500).json({ error: "Failed to connect to AI assistant. Check your internet connection or API key." });
   }
 });
 

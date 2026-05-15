@@ -51,8 +51,8 @@ export default function EventModal({ open, onClose, event }) {
         <h2>Join: {event.title}</h2>
         <p style={{fontSize:14}}>{event.description}</p>
         <form onSubmit={handleSubmit}>
-          <input placeholder="Your name" value={name} onChange={e=>setName(e.target.value)} required />
-          <input placeholder="Your email" value={email} onChange={e=>setEmail(e.target.value)} type="email" required />
+          <input placeholder="Enter your name" value={name} onChange={e=>setName(e.target.value)} required />
+          <input placeholder="Enter your email address" value={email} onChange={e=>setEmail(e.target.value)} type="email" required />
           <input placeholder="City (auto-detected)" value={city} onChange={e=>setCity(e.target.value)} />
           <div style={{display:'flex', gap:8}}>
             <button type="submit">Join Event</button>

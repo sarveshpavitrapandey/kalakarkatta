@@ -3,40 +3,7 @@
 @tailwind utilities;
 
 :root {
-  /* Default Dark Mode Colors */
-  --main-bg: #160b30;
-  --surface-bg: rgba(255, 255, 255, 0.06);
-  --border-color: rgba(245, 244, 249, 0.12);
-  --main-accent: #7c5cff;
-  --text-color: #f5f4f9;
-  --text-muted: rgba(245, 244, 249, 0.72);
-}
-
-html.light {
-  --color-bg: #f8fafc;
-  --color-bg-alt: #f1f5f9;
-  --color-surface: #ffffff;
-  --color-surface-strong: #f1f5f9;
-  --color-text: #0f172a;
-  --color-text-muted: #64748b;
-  --color-border: #e2e8f0;
-  --color-gradient-start: #e2e8f0;
-  --color-gradient-end: #f8fafc;
-  
-  /* Overriding for specific components that use these */
-  --main-bg: #f8fafc;
-  --surface-bg: #ffffff;
-  --border-color: #e2e8f0;
-  --text-color: #0f172a;
-  --text-muted: #64748b;
-}
-
-html.light body {
-  background-image: none;
-  background-color: var(--color-bg);
-}
-
-:root {
+  /* Theme Variables */
   --color-bg: #160b30;
   --color-bg-alt: #1f1140;
   --color-surface: rgba(255, 255, 255, 0.06);
@@ -51,6 +18,15 @@ html.light body {
   --color-border: rgba(245, 244, 249, 0.12);
   --color-gradient-start: #3f2b96;
   --color-gradient-end: #a34ac4;
+  
+  /* Tailwind Alias Mappings */
+  --main-bg: var(--color-bg);
+  --surface-bg: var(--color-surface);
+  --border-color: var(--color-border);
+  --main-accent: var(--color-primary);
+  --text-color: var(--color-text);
+  --text-muted: var(--color-text-muted);
+
   --shadow-soft: 0 24px 60px rgba(18, 8, 44, 0.35);
   --shadow-card: 0 18px 40px rgba(18, 8, 44, 0.42);
   --shadow-elevated: 0 28px 60px rgba(18, 8, 44, 0.5);
@@ -58,10 +34,40 @@ html.light body {
   font-size: 16px;
 }
 
+html.light {
+  --color-bg: #f8fafc;
+  --color-bg-alt: #f1f5f9;
+  --color-surface: #ffffff;
+  --color-surface-strong: #f1f5f9;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --color-border: #e2e8f0;
+  --color-gradient-start: #e2e8f0;
+  --color-gradient-end: #f8fafc;
+  
+  --main-bg: var(--color-bg);
+  --surface-bg: var(--color-surface);
+  --border-color: var(--color-border);
+  --text-color: var(--color-text);
+  --text-muted: var(--color-text-muted);
+}
+
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+/* Global Input Styling to ensure visibility */
+input, textarea, select {
+  color: var(--color-text);
+  background-color: var(--color-surface-strong);
+  border-color: var(--color-border);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.8;
 }
 
 html,
@@ -1068,26 +1074,52 @@ button {
 .modal-backdrop{
   position: fixed;
   inset:0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.75);
   display:flex;
   align-items:center;
   justify-content:center;
   z-index:9999;
+  backdrop-filter: blur(4px);
 }
 .modal{
-  background:#fff;
-  padding:20px;
-  border-radius:8px;
-  width:320px;
-  max-width:90%;
-  box-shadow:0 6px 24px rgba(0,0,0,0.2);
+  background: var(--color-bg-alt);
+  padding: 32px;
+  border-radius: 24px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: var(--shadow-elevated);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
 }
-.modal h2{margin-top:0;}
-.modal form{display:flex;flex-direction:column;gap:8px;}
-.modal input{padding:8px;border:1px solid #ccc;border-radius:4px;}
-.modal button{padding:8px;border-radius:6px;border:0;cursor:pointer;}
-.modal button.secondary{background:#eee;}
-.message{margin-top:8px;color:green;}
+.modal h2{margin-top:0; color: var(--color-text);}
+.modal form{display:flex;flex-direction:column;gap:16px;}
+.modal input{
+  padding: 12px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface-strong);
+  color: var(--color-text);
+  font-family: inherit;
+}
+.modal input::placeholder {
+  color: var(--color-text-muted);
+}
+.modal button{
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 0;
+  cursor: pointer;
+  font-weight: 600;
+  background: var(--color-primary);
+  color: white;
+  transition: opacity 0.2s;
+}
+.modal button:hover { opacity: 0.9; }
+.modal button.secondary{
+  background: var(--color-surface-strong);
+  color: var(--color-text);
+}
+.message{margin-top:8px;color: #4ade80;}
 
 /* events grid */
 .events { padding:60px 0; color:#fff; }

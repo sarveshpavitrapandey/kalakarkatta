@@ -125,8 +125,9 @@ async function seedEvents() {
 }
 seedEvents();
 
-// ─── Auto-cleanup: Delete expired events and jobs ─────────────────────────────
+// ─── Auto-cleanup: Delete expired events, jobs, and unverified users ──────────
 const Job = require('./src/models/Job');
+const User = require('./src/models/User');
 
 async function cleanupExpiredContent() {
   try {
@@ -142,6 +143,16 @@ async function cleanupExpiredContent() {
     const deletedJobs = await Job.deleteMany({ deadline: { $lt: now, $ne: null } });
     if (deletedJobs.deletedCount > 0) {
       logger.info(`Auto-cleanup: Removed ${deletedJobs.deletedCount} expired job(s)`);
+    }
+
+    // Delete unverified users older than 24 hours
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const deletedUsers = await User.deleteMany({ 
+      isVerified: false, 
+      createdAt: { $lt: twentyFourHoursAgo } 
+    });
+    if (deletedUsers.deletedCount > 0) {
+      logger.info(`Auto-cleanup: Removed ${deletedUsers.deletedCount} unverified user(s)`);
     }
   } catch (err) {
     logger.error('Auto-cleanup error:', err);

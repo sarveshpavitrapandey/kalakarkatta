@@ -18,6 +18,7 @@ import SignupPage from "./pages/SignupPage.jsx";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
 import VerifyEmailPage from "./pages/VerifyEmailPage.jsx";
+import VerificationSentPage from "./pages/VerificationSentPage.jsx";
 import OnboardingPage from "./pages/OnboardingPage.jsx";
 import ChatPage from "./pages/ChatPage.jsx";
 import CreateJob from "./pages/CreateJob.jsx";
@@ -61,6 +62,7 @@ export default function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
           <Route path="/verify/:token" element={<VerifyEmailPage />} />
+          <Route path="/verification-sent" element={<VerificationSentPage />} />
 
           {/* Protected Routes */}
           <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />

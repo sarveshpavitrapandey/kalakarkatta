@@ -214,11 +214,11 @@ export default function Feed() {
                           <textarea 
                             value={editDescription}
                             onChange={(e) => setEditDescription(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-primary transition"
+                            className="w-full bg-surface border border-border rounded-xl p-3 text-text text-sm focus:outline-none focus:border-primary transition"
                             rows={3}
                           />
                           <div className="flex gap-2 justify-end">
-                            <button onClick={() => setEditingPostId(null)} className="px-3 py-1 text-[10px] font-bold text-textMuted hover:text-white">CANCEL</button>
+                            <button onClick={() => setEditingPostId(null)} className="px-3 py-1 text-[10px] font-bold text-textMuted hover:text-text">CANCEL</button>
                             <button onClick={() => handleUpdatePost(post._id)} className="px-4 py-1 bg-primary rounded-lg text-[10px] font-bold text-white">SAVE</button>
                           </div>
                         </div>

@@ -55,11 +55,11 @@ export default function CreateJob() {
   };
 
   const field = {
-    background: 'rgba(255,255,255,0.07)',
+    background: 'var(--color-surface)',
     padding: '0.85rem 1rem',
     borderRadius: 10,
-    border: '1px solid rgba(255,255,255,0.12)',
-    color: 'white',
+    border: '1px solid var(--color-border)',
+    color: 'var(--color-text)',
     width: '100%',
     boxSizing: 'border-box',
     fontSize: '0.95rem',
@@ -69,21 +69,21 @@ export default function CreateJob() {
   const label = {
     fontWeight: 600,
     fontSize: '0.8rem',
-    color: 'rgba(255,255,255,0.6)',
+    color: 'var(--color-text-muted)',
     letterSpacing: '0.06em',
     textTransform: 'uppercase',
     display: 'block',
     marginBottom: '0.4rem',
   };
 
-  const opt = { background: '#1e1a2e', color: 'white' };
+  const opt = { background: 'var(--color-bg-alt)', color: 'var(--color-text)' };
 
   const jobTypes = ['Full-time', 'Part-time', 'Internship'];
 
   return (
     <main style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 55%, #24243e 100%)',
+      background: 'var(--color-bg)',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'flex-start',
@@ -92,12 +92,12 @@ export default function CreateJob() {
       <div style={{
         width: '100%',
         maxWidth: '680px',
-        background: 'rgba(255,255,255,0.04)',
+        background: 'var(--color-surface)',
         backdropFilter: 'blur(24px)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        border: '1px solid var(--color-border)',
         borderRadius: 24,
         padding: '2.5rem',
-        boxShadow: '0 25px 60px rgba(0,0,0,0.6)',
+        boxShadow: 'var(--shadow-card)',
       }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>

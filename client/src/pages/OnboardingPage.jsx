@@ -94,26 +94,26 @@ export default function OnboardingPage() {
             <input id="pfp-upload" type="file" accept="image/*" onChange={handleImageChange} style={{ display: 'none' }} />
           </div>
 
-          <label style={{ color: '#ccc', fontSize: '0.9rem' }}>Unique Username (cannot be changed)</label>
-          <div style={{ display: 'flex', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '6px', overflow: 'hidden', marginBottom: '1rem' }}>
-            <span style={{ padding: '0.8rem', color: '#888', background: 'rgba(0,0,0,0.3)' }}>@</span>
+          <label style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Unique Username (cannot be changed)</label>
+          <div style={{ display: 'flex', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '6px', overflow: 'hidden', marginBottom: '1rem' }}>
+            <span style={{ padding: '0.8rem', color: 'var(--color-text-muted)', background: 'var(--color-surface-strong)' }}>@</span>
             <input 
               type="text" 
-              placeholder="username" 
+              placeholder="Choose a unique username" 
               value={username} 
               onChange={e => setUsername(e.target.value)} 
               required 
-              style={{ flex: 1, padding: '0.8rem', background: 'transparent', border: 'none', color: 'white', outline: 'none' }}
+              style={{ flex: 1, padding: '0.8rem', background: 'transparent', border: 'none', color: 'var(--color-text)', outline: 'none' }}
             />
           </div>
 
-          <label style={{ color: '#ccc', fontSize: '0.9rem' }}>Bio</label>
+          <label style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>Bio</label>
           <textarea 
             placeholder="Tell us about your art..." 
             value={bio} 
             onChange={e => setBio(e.target.value)} 
             rows="3"
-            style={{ padding: '0.8rem', borderRadius: '6px', background: 'rgba(0,0,0,0.2)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', marginBottom: '1rem' }}
+            style={{ padding: '0.8rem', borderRadius: '6px', background: 'var(--color-surface)', color: 'var(--color-text)', border: '1px solid var(--color-border)', marginBottom: '1rem' }}
           />
 
           <label style={{ color: '#ccc', fontSize: '0.9rem', marginBottom: '0.5rem' }}>What are your disciplines?</label>

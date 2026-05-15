@@ -81,6 +81,16 @@ router.put('/read/:otherUserId', requireAuth, async (req, res, next) => {
         { conversationId: conversation._id, sender: otherUserId, isRead: false },
         { $set: { isRead: true } }
       );
+
+      // Emit to the current user to update their unread count badge
+      const io = req.app.get('io');
+      const connectedUsers = req.app.get('connectedUsers');
+      if (io && connectedUsers) {
+        const socketId = connectedUsers.get(userId.toString());
+        if (socketId) {
+          io.to(socketId).emit('messages_read');
+        }
+      }
     }
     res.json({ message: 'Messages marked as read' });
   } catch (error) {
@@ -103,7 +113,13 @@ router.post('/', requireAuth, upload.single('media'), async (req, res, next) => 
 
     if (req.file) {
       mediaUrl = req.file.path; // Cloudinary URL
-      mediaType = req.file.mimetype.startsWith('video/') ? 'video' : 'image';
+      if (req.file.mimetype.startsWith('video/')) {
+        mediaType = 'video';
+      } else if (req.file.mimetype.startsWith('image/')) {
+        mediaType = 'image';
+      } else {
+        mediaType = 'document';
+      }
     }
 
     // Find or create conversation
