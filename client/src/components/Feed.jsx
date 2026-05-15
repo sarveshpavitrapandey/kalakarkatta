@@ -14,6 +14,10 @@ export default function Feed() {
 
   const emojis = ['❤️', '🔥', '👏', '🎨', '🌟', '🙌', '💯', '✨'];
   const [following, setFollowing] = useState([]);
+  
+  // Edit state
+  const [editingPostId, setEditingPostId] = useState(null);
+  const [editDescription, setEditDescription] = useState('');
 
   useEffect(() => {
     if (loggedUser) {
@@ -82,6 +86,40 @@ export default function Feed() {
     }
   };
 
+  const handleDeletePost = async (postId) => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+    
+    try {
+      const token = loggedUser?.token || JSON.parse(localStorage.getItem('user'))?.token;
+      await axios.delete(`http://localhost:5000/api/posts/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPosts(prev => prev.filter(p => p._id !== postId));
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to delete post");
+    }
+  };
+
+  const startEditing = (post) => {
+    setEditingPostId(post._id);
+    setEditDescription(post.description);
+  };
+
+  const handleUpdatePost = async (postId) => {
+    try {
+      const token = loggedUser?.token || JSON.parse(localStorage.getItem('user'))?.token;
+      const res = await axios.put(`http://localhost:5000/api/posts/${postId}`, 
+        { description: editDescription },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      setPosts(prev => prev.map(p => p._id === postId ? { ...p, description: res.data.description } : p));
+      setEditingPostId(null);
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to update post");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-main pt-6 pb-20">
       <div className="max-w-2xl mx-auto px-4">
@@ -129,13 +167,30 @@ export default function Feed() {
                         </div>
                       </div>
                       
-                      {!isAuthor && (
+                      {!isAuthor ? (
                         <button 
                           onClick={() => handleFollow(post.author._id)}
                           className={`px-4 py-1.5 rounded-full text-xs font-bold transition ${isFollowing ? 'bg-surface border border-border text-text hover:bg-white/5' : 'bg-primary text-white hover:opacity-90 shadow-lg shadow-primary/30'}`}
                         >
                           {isFollowing ? 'Following' : 'Follow'}
                         </button>
+                      ) : (
+                        <div className="flex gap-2">
+                          <button 
+                            onClick={() => startEditing(post)}
+                            className="p-2 hover:bg-white/5 rounded-full text-textMuted hover:text-white transition"
+                            title="Edit Post"
+                          >
+                            ✏️
+                          </button>
+                          <button 
+                            onClick={() => handleDeletePost(post._id)}
+                            className="p-2 hover:bg-red-500/10 rounded-full text-textMuted hover:text-red-400 transition"
+                            title="Delete Post"
+                          >
+                            🗑️
+                          </button>
+                        </div>
                       )}
                     </div>
 
@@ -151,12 +206,25 @@ export default function Feed() {
                     )}
 
                     {/* Description */}
-                    {post.description && (
-                      <div className="p-4 pb-2 text-text text-sm">
-                        <span className="font-bold mr-2">{post.author.name || post.author.username}</span>
-                        {post.description}
-                      </div>
-                    )}
+                    <div className="p-4 pb-2 text-text text-sm">
+                      <span className="font-bold mr-2">{post.author.name || post.author.username}</span>
+                      {editingPostId === post._id ? (
+                        <div className="mt-2 space-y-2">
+                          <textarea 
+                            value={editDescription}
+                            onChange={(e) => setEditDescription(e.target.value)}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm focus:outline-none focus:border-primary transition"
+                            rows={3}
+                          />
+                          <div className="flex gap-2 justify-end">
+                            <button onClick={() => setEditingPostId(null)} className="px-3 py-1 text-[10px] font-bold text-textMuted hover:text-white">CANCEL</button>
+                            <button onClick={() => handleUpdatePost(post._id)} className="px-4 py-1 bg-primary rounded-lg text-[10px] font-bold text-white">SAVE</button>
+                          </div>
+                        </div>
+                      ) : (
+                        post.description
+                      )}
+                    </div>
 
                     {/* Comments Section */}
                     <div className="p-4 pt-2">

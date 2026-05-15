@@ -29,6 +29,10 @@ export default function Profile() {
   const [editProfilePic, setEditProfilePic] = useState(null);
   const [editPreview, setEditPreview] = useState(null);
 
+  // Edit Post state
+  const [isEditingPost, setIsEditingPost] = useState(false);
+  const [editPostDescription, setEditPostDescription] = useState('');
+
   const actualCurrentUser = currentUser?.user || currentUser;
   const profileId = id || actualCurrentUser?._id;
 
@@ -126,6 +130,37 @@ export default function Profile() {
     } catch (error) {
       console.error(error);
       alert(error.response?.data?.error || "Failed to post comment");
+    }
+  };
+
+  const handleDeletePost = async (postId) => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+    try {
+      const token = actualCurrentUser?.token || JSON.parse(localStorage.getItem('user'))?.token;
+      await axios.delete(`http://localhost:5000/api/posts/${postId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setPosts(posts.filter(p => p._id !== postId));
+      setSelectedPost(null);
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to delete post");
+    }
+  };
+
+  const handleUpdatePost = async (postId) => {
+    try {
+      const token = actualCurrentUser?.token || JSON.parse(localStorage.getItem('user'))?.token;
+      const res = await axios.put(`http://localhost:5000/api/posts/${postId}`, 
+        { description: editPostDescription },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      const updatedPost = { ...selectedPost, description: res.data.description };
+      setSelectedPost(updatedPost);
+      setPosts(posts.map(p => p._id === postId ? updatedPost : p));
+      setIsEditingPost(false);
+    } catch (err) {
+      alert(err.response?.data?.error || "Failed to update post");
     }
   };
 
@@ -332,19 +367,50 @@ export default function Profile() {
               {/* Right: Interaction Area */}
               <div className="flex-1 flex flex-col bg-[#0f0c29] border-l border-white/5 min-w-[320px]">
                 {/* Header */}
-                <div className="p-6 border-b border-white/5 flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full overflow-hidden border border-primary/30">
-                    <img src={profileData.profilePicture} className="w-full h-full object-cover" />
+                  <div className="p-6 border-b border-white/5 flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-full overflow-hidden border border-primary/30">
+                        <img src={profileData.profilePicture} className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-white text-sm">{profileData.username}</div>
+                        <div className="text-[10px] text-textMuted uppercase tracking-widest">{new Date(selectedPost.createdAt).toLocaleDateString()}</div>
+                      </div>
+                    </div>
+                    
+                    {isOwnProfile && (
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => { setIsEditingPost(true); setEditPostDescription(selectedPost.description); }}
+                          className="p-2 hover:bg-white/5 rounded-full text-textMuted hover:text-white transition"
+                        >
+                          ✏️
+                        </button>
+                        <button 
+                          onClick={() => handleDeletePost(selectedPost._id)}
+                          className="p-2 hover:bg-red-500/10 rounded-full text-textMuted hover:text-red-400 transition"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  <div>
-                    <div className="font-bold text-white text-sm">{profileData.username}</div>
-                    <div className="text-[10px] text-textMuted uppercase tracking-widest">{new Date(selectedPost.createdAt).toLocaleDateString()}</div>
-                  </div>
-                </div>
 
                 {/* Comments List */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
-                  {selectedPost.description && (
+                  {isEditingPost ? (
+                    <div className="p-4 bg-white/5 rounded-xl border border-white/10">
+                      <textarea 
+                        className="w-full bg-transparent text-white text-sm focus:outline-none mb-2"
+                        value={editPostDescription}
+                        onChange={(e) => setEditPostDescription(e.target.value)}
+                      />
+                      <div className="flex gap-2 justify-end">
+                        <button onClick={() => setIsEditingPost(false)} className="text-xs font-bold text-textMuted">Cancel</button>
+                        <button onClick={() => handleUpdatePost(selectedPost._id)} className="text-xs font-bold text-primary">Save</button>
+                      </div>
+                    </div>
+                  ) : selectedPost.description && (
                     <div className="flex gap-4">
                       <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
                         <img src={profileData.profilePicture} className="w-full h-full object-cover" />

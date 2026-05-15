@@ -18,20 +18,29 @@ router.post('/', async (req, res) => {
 // complete onboarding
 router.put('/onboarding', requireAuth, upload.single('profilePicture'), async (req, res) => {
   try {
-    const { username, bio, skills, availabilityStatus } = req.body;
+    const { name, username, bio, skills, availabilityStatus } = req.body;
     
-    // Check if username is taken
-    const existingUser = await User.findOne({ username, _id: { $ne: req.user._id } });
-    if (existingUser) {
-      return res.status(400).json({ error: 'Username is already taken. Please choose another one.' });
+    // Check if username is taken (only if provided)
+    if (username) {
+      const existingUser = await User.findOne({ username, _id: { $ne: req.user._id } });
+      if (existingUser) {
+        return res.status(400).json({ error: 'Username is already taken. Please choose another one.' });
+      }
     }
 
     const updateData = {
-      username,
       bio,
       availabilityStatus,
       onboardingComplete: true
     };
+
+    if (name) {
+      updateData.name = name;
+    }
+
+    if (username) {
+      updateData.username = username;
+    }
 
     if (skills) {
       // skills comes as a comma-separated string from FormData
