@@ -53,11 +53,33 @@ router.delete('/:id', requireAuth, async (req, res) => {
 router.post('/join', async (req, res) => {
   try {
     const { eventId, name, email, city } = req.body;
+
+    // ── Validation ──────────────────────────────────────────────────────────
+    const errors = [];
+    if (!eventId) errors.push('eventId is required');
+    if (!name || !name.trim()) errors.push('name is required');
+    if (!email || !email.trim()) {
+      errors.push('email is required');
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      errors.push('email is invalid');
+    }
+    if (!city || !city.trim()) errors.push('city is required');
+
+    if (errors.length > 0) {
+      return res.status(400).json({ error: errors.join(', ') });
+    }
+
     const ev = await Event.findById(eventId);
     if (!ev) return res.status(404).json({ error: 'Event not found' });
     if (ev.availableSlots <= 0) return res.status(400).json({ error: 'Event is sold out' });
 
-    ev.attendees.push({ name, email, city });
+    // Prevent duplicate registration (same email for same event)
+    const alreadyRegistered = ev.attendees.some(a => a.email.toLowerCase() === email.trim().toLowerCase());
+    if (alreadyRegistered) {
+      return res.status(400).json({ error: 'This email is already registered for this event' });
+    }
+
+    ev.attendees.push({ name: name.trim(), email: email.trim().toLowerCase(), city: city.trim() });
     ev.availableSlots -= 1;
     await ev.save();
     res.json({ success: true, attendees: ev.attendees, availableSlots: ev.availableSlots });
