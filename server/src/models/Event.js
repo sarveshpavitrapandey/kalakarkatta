@@ -11,7 +11,7 @@ const eventSchema = new mongoose.Schema({
   creator: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   title: { type: String, required: true },
   category: String,
-  date: String,
+  date: { type: Date, index: true },
   location: String,
   description: String,
   price: { type: Number, default: 0 },
@@ -22,3 +22,4 @@ const eventSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Event', eventSchema);
+

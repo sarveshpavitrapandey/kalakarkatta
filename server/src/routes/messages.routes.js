@@ -140,4 +140,46 @@ router.post('/', requireAuth, upload.single('media'), async (req, res, next) => 
   }
 });
 
+// DELETE /api/messages/:messageId - Unsend a message (sender only)
+router.delete('/:messageId', requireAuth, async (req, res, next) => {
+  try {
+    const { messageId } = req.params;
+    const userId = req.user._id;
+
+    const message = await Message.findById(messageId);
+    if (!message) return res.status(404).json({ error: 'Message not found' });
+
+    // Only the sender can unsend
+    if (message.sender.toString() !== userId.toString()) {
+      return res.status(403).json({ error: 'Only the sender can unsend a message.' });
+    }
+
+    // Find the conversation to identify the recipient for socket emit
+    const conversation = await Conversation.findById(message.conversationId);
+
+    await Message.findByIdAndDelete(messageId);
+    logger.info(`Message ${messageId} unsent by ${userId}`);
+
+    // Notify the recipient via socket so their UI updates instantly
+    if (conversation) {
+      const io = req.app.get('io');
+      const connectedUsers = req.app.get('connectedUsers');
+      if (io && connectedUsers) {
+        const recipientId = conversation.participants.find(p => p.toString() !== userId.toString());
+        if (recipientId) {
+          const recipientSocket = connectedUsers.get(recipientId.toString());
+          if (recipientSocket) {
+            io.to(recipientSocket).emit('message_unsent', { messageId });
+          }
+        }
+      }
+    }
+
+    res.json({ message: 'Message unsent successfully' });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;
+

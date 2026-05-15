@@ -81,16 +81,31 @@ export default function Header() {
 
   const handleNotificationClick = async () => {
     setNotificationOpen(!notificationOpen);
-    if (!notificationOpen && unreadNotifCount > 0) {
-      try {
-        await axios.put('http://localhost:5000/api/notifications/read-all', {}, {
-          headers: { Authorization: `Bearer ${loggedUser.token}` }
-        });
-        setUnreadNotifCount(0);
-        setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
-      } catch (err) {
-        console.error(err);
-      }
+    if (!notificationOpen) {
+      setUnreadNotifCount(0); // Clear badge immediately on open
+    }
+  };
+
+  const handleDismissNotification = async (notifId) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/notifications/${notifId}`, {
+        headers: { Authorization: `Bearer ${loggedUser.token}` }
+      });
+      setNotifications(prev => prev.filter(n => n._id !== notifId));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleClearAllNotifications = async () => {
+    try {
+      await axios.delete('http://localhost:5000/api/notifications/read-all', {
+        headers: { Authorization: `Bearer ${loggedUser.token}` }
+      });
+      setNotifications([]);
+      setUnreadNotifCount(0);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -202,13 +217,21 @@ export default function Header() {
                       exit={{ opacity: 0, y: -10 }}
                       className="absolute top-12 right-0 bg-[#0f0c29]/95 backdrop-blur-xl border border-white/10 rounded-xl p-3 min-w-[250px] max-h-[300px] overflow-y-auto custom-scrollbar flex flex-col gap-2 z-[1000] shadow-2xl"
                     >
-                      <h4 className="text-white text-sm m-0 border-b border-white/10 pb-2">Notifications</h4>
+                      <div className="flex justify-between items-center border-b border-white/10 pb-2">
+                        <h4 className="text-white text-sm m-0">Notifications</h4>
+                        {notifications.length > 0 && (
+                          <button onClick={handleClearAllNotifications} className="text-white/40 text-[10px] hover:text-red-400 transition bg-transparent border-none cursor-pointer">Clear all</button>
+                        )}
+                      </div>
                       {notifications.length === 0 ? (
                          <p className="text-white/50 text-sm">No notifications.</p>
                       ) : notifications.map(notif => (
-                        <div key={notif._id} className="py-2 border-b border-white/5 last:border-0">
-                          <p className="text-white text-sm m-0 leading-tight">{notif.message}</p>
-                          <span className="text-white/50 text-[10px]">{new Date(notif.createdAt).toLocaleString()}</span>
+                        <div key={notif._id} className="py-2 border-b border-white/5 last:border-0 flex justify-between items-start gap-2">
+                          <div className="flex-1">
+                            <p className="text-white text-sm m-0 leading-tight">{notif.message}</p>
+                            <span className="text-white/50 text-[10px]">{new Date(notif.createdAt).toLocaleString()}</span>
+                          </div>
+                          <button onClick={() => handleDismissNotification(notif._id)} className="text-white/30 hover:text-red-400 transition bg-transparent border-none cursor-pointer text-xs flex-shrink-0 mt-0.5">✕</button>
                         </div>
                       ))}
                     </motion.div>
@@ -348,13 +371,21 @@ export default function Header() {
                         exit={{ opacity: 0, y: -10 }}
                         className="absolute top-10 right-0 bg-background/95 backdrop-blur-xl border border-border rounded-xl p-3 min-w-[250px] max-h-[300px] overflow-y-auto custom-scrollbar flex flex-col gap-2 z-[1000] shadow-xl"
                       >
-                        <h4 className="text-text text-sm m-0 border-b border-border pb-2">Notifications</h4>
+                        <div className="flex justify-between items-center border-b border-border pb-2">
+                          <h4 className="text-text text-sm m-0">Notifications</h4>
+                          {notifications.length > 0 && (
+                            <button onClick={handleClearAllNotifications} className="text-textMuted text-[10px] hover:text-red-400 transition bg-transparent border-none cursor-pointer">Clear all</button>
+                          )}
+                        </div>
                         {notifications.length === 0 ? (
                            <p className="text-textMuted text-sm">No notifications.</p>
                         ) : notifications.map(notif => (
-                          <div key={notif._id} className="py-2 border-b border-border/50 last:border-0">
-                            <p className="text-text text-sm m-0 leading-tight">{notif.message}</p>
-                            <span className="text-textMuted text-[10px]">{new Date(notif.createdAt).toLocaleString()}</span>
+                          <div key={notif._id} className="py-2 border-b border-border/50 last:border-0 flex justify-between items-start gap-2">
+                            <div className="flex-1">
+                              <p className="text-text text-sm m-0 leading-tight">{notif.message}</p>
+                              <span className="text-textMuted text-[10px]">{new Date(notif.createdAt).toLocaleString()}</span>
+                            </div>
+                            <button onClick={() => handleDismissNotification(notif._id)} className="text-textMuted hover:text-red-400 transition bg-transparent border-none cursor-pointer text-xs flex-shrink-0 mt-0.5">✕</button>
                           </div>
                         ))}
                       </motion.div>

@@ -135,7 +135,8 @@ export default function Feed() {
           <div className="flex flex-col gap-8">
             <AnimatePresence>
               {posts.map(post => {
-                const isAuthor = post.author._id === (loggedUser.user?._id || loggedUser._id);
+                const loggedUserId = (loggedUser.user?._id || loggedUser._id || '').toString();
+                const isAuthor = post.author._id.toString() === loggedUserId;
                 const isFollowing = following.includes(post.author._id);
 
                 return (

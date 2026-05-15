@@ -80,8 +80,14 @@ export default function ChatPage() {
 
     socket.on('receive_message', handleReceiveMessage);
 
+    // Handle real-time unsend from the other user
+    socket.on('message_unsent', ({ messageId }) => {
+      setMessages(prev => prev.filter(m => m._id !== messageId));
+    });
+
     return () => {
       socket.off('receive_message', handleReceiveMessage);
+      socket.off('message_unsent');
     };
   }, [socket, otherUserId]);
 
@@ -121,6 +127,19 @@ export default function ChatPage() {
       console.error("Error sending message:", err);
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleUnsendMessage = async (messageId) => {
+    try {
+      const token = currentUserData?.token;
+      await axios.delete(`http://localhost:5000/api/messages/${messageId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setMessages(prev => prev.filter(m => m._id !== messageId));
+    } catch (err) {
+      console.error('Failed to unsend:', err);
+      alert(err.response?.data?.error || 'Failed to unsend message');
     }
   };
 
@@ -169,7 +188,7 @@ export default function ChatPage() {
                 key={index}
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                className={`max-w-[75%] px-5 py-3 text-[0.95rem] shadow-sm flex flex-col gap-2 ${
+                className={`max-w-[75%] px-5 py-3 text-[0.95rem] shadow-sm flex flex-col gap-2 group relative ${
                   isMine 
                     ? 'self-end bg-gradient-to-br from-primary to-blue-600 text-white rounded-2xl rounded-tr-sm' 
                     : 'self-start bg-surface border border-border text-text rounded-2xl rounded-tl-sm'
@@ -186,6 +205,15 @@ export default function ChatPage() {
                   </div>
                 )}
                 {msg.text && <span>{msg.text}</span>}
+                {/* Unsend button — only visible on hover for sender's own messages */}
+                {isMine && msg._id && (
+                  <button
+                    onClick={() => handleUnsendMessage(msg._id)}
+                    className="absolute -left-16 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition text-[10px] text-red-400 bg-surface border border-red-400/30 rounded-lg px-2 py-1 cursor-pointer whitespace-nowrap"
+                  >
+                    Unsend
+                  </button>
+                )}
               </motion.div>
             );
           })

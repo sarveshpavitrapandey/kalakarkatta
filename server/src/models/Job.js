@@ -12,8 +12,10 @@ const jobSchema = new mongoose.Schema({
   salaryType: { type: String, enum: ['Monthly', 'Annual', 'Fixed (Project)'], default: 'Monthly' },
   experienceLevel: { type: String, enum: ['Beginner', 'Intermediate', 'Expert'], default: 'Intermediate' },
   description: { type: String, required: true },
+  deadline: { type: Date, index: true }, // Auto-delete after this date
   status: { type: String, enum: ['Open', 'Closed'], default: 'Open' },
   createdAt: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Job', jobSchema);
+

@@ -17,37 +17,42 @@ router.get('/', requireAuth, async (req, res, next) => {
   }
 });
 
-// PUT /api/notifications/read-all - Mark all notifications as read
-router.put('/read-all', requireAuth, async (req, res, next) => {
+// GET /api/notifications/unread-count - Get count of unread notifications
+router.get('/unread-count', requireAuth, async (req, res, next) => {
   try {
-    await Notification.updateMany(
-      { recipient: req.user._id, isRead: false },
-      { isRead: true }
-    );
-    res.json({ message: 'All notifications marked as read' });
+    const count = await Notification.countDocuments({ recipient: req.user._id, isRead: false });
+    res.json({ count });
   } catch (error) {
     next(error);
   }
 });
 
-// PUT /api/notifications/:id/read - Mark a notification as read
-router.put('/:id/read', requireAuth, async (req, res, next) => {
+// DELETE /api/notifications/read-all - Delete ALL notifications for the user
+router.delete('/read-all', requireAuth, async (req, res, next) => {
   try {
-    const notification = await Notification.findOneAndUpdate(
-      { _id: req.params.id, recipient: req.user._id },
-      { isRead: true },
-      { new: true }
-    );
+    await Notification.deleteMany({ recipient: req.user._id });
+    res.json({ message: 'All notifications cleared' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE /api/notifications/:id - Delete a single notification when user views it
+router.delete('/:id', requireAuth, async (req, res, next) => {
+  try {
+    const notification = await Notification.findOneAndDelete({
+      _id: req.params.id,
+      recipient: req.user._id
+    });
 
     if (!notification) {
       return res.status(404).json({ error: 'Notification not found' });
     }
 
-    res.json(notification);
+    res.json({ message: 'Notification dismissed' });
   } catch (error) {
     next(error);
   }
 });
-
 
 module.exports = router;

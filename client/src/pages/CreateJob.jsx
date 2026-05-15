@@ -14,6 +14,7 @@ export default function CreateJob() {
   const [salaryType, setSalaryType] = useState('Monthly');
   const [experienceLevel, setExperienceLevel] = useState('Intermediate');
   const [description, setDescription] = useState('');
+  const [deadline, setDeadline] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { user } = useContext(AuthContext);
@@ -38,6 +39,7 @@ export default function CreateJob() {
         salaryType,
         experienceLevel,
         description,
+        deadline: deadline ? new Date(deadline).toISOString() : undefined,
       };
       await axios.post('http://localhost:5000/api/jobs', payload, {
         headers: { Authorization: `Bearer ${user.token}` }
@@ -265,6 +267,23 @@ export default function CreateJob() {
               onChange={(e) => setRequiredSkills(e.target.value)}
               style={field}
             />
+          </div>
+
+          {/* Application Deadline */}
+          <div>
+            <label style={label}>Application Deadline (Optional)</label>
+            <input
+              type="date"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
+              min={new Date().toISOString().split('T')[0]}
+              style={{ ...field, colorScheme: 'dark' }}
+            />
+            {deadline && (
+              <p style={{ marginTop: '0.4rem', fontSize: '0.8rem', color: 'rgba(96,165,250,0.8)', fontWeight: 600 }}>
+                🗓️ This job will auto-expire on {new Date(deadline).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+              </p>
+            )}
           </div>
 
           {/* Description */}

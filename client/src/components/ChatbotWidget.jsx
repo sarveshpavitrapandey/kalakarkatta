@@ -24,7 +24,7 @@ export default function ChatbotWidget() {
   // Clear chat when user logs out
   useEffect(() => {
     if (!loggedUser) {
-      setMessages([{ role: 'assistant', content: 'Hello! I am your KalakarKatta Assistant. Please login to start chatting!' }]);
+      setMessages([]); // Wipe all chat history on logout
     }
   }, [loggedUser]);
 

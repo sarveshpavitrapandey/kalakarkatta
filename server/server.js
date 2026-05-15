@@ -125,6 +125,34 @@ async function seedEvents() {
 }
 seedEvents();
 
+// ─── Auto-cleanup: Delete expired events and jobs ─────────────────────────────
+const Job = require('./src/models/Job');
+
+async function cleanupExpiredContent() {
+  try {
+    const now = new Date();
+
+    // Delete events whose date has passed
+    const deletedEvents = await Event.deleteMany({ date: { $lt: now } });
+    if (deletedEvents.deletedCount > 0) {
+      logger.info(`Auto-cleanup: Removed ${deletedEvents.deletedCount} expired event(s)`);
+    }
+
+    // Delete jobs whose deadline has passed (only if deadline was set)
+    const deletedJobs = await Job.deleteMany({ deadline: { $lt: now, $ne: null } });
+    if (deletedJobs.deletedCount > 0) {
+      logger.info(`Auto-cleanup: Removed ${deletedJobs.deletedCount} expired job(s)`);
+    }
+  } catch (err) {
+    logger.error('Auto-cleanup error:', err);
+  }
+}
+
+// Run once on startup, then every 24 hours
+cleanupExpiredContent();
+setInterval(cleanupExpiredContent, 24 * 60 * 60 * 1000);
+
 server.listen(PORT, () => {
   logger.info(`Server running on http://localhost:${PORT}`);
 });
+
